@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="K Chikuse">
+  <meta name="description" content="Tough Bible Quiz">
+  <meta name="viewport" content="width=device-width">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#3a88cb">
+  <link href="favicon.ico" rel="icon">
+  <link href="manifest.json" rel="manifest">
+  <link href="assets/style.css" rel="stylesheet">
+  <link href="assets/images/7.png" rel="prefetch" as="image">
+  <link href="assets/fonts/roboto-regular.woff2" rel="preload" as="font" crossorigin>
+  <link href="assets/fonts/MaterialIcons-Regular.woff" rel="preload" as="font" crossorigin>
+  <link href="assets/fonts/MaterialIcons-Regular.woff2" rel="preload" as="font" crossorigin>
+  <title>Tough Bible Quiz</title>
+</head>
+<body __oncontextmenu="return false">
+  <main cloak>
+    <header>
+      <i class="material-icons"></i>
+    </header>
+    <content></content>
+    <footer>
+      <button></button>
+      <button></button>
+      <button></button>
+    </footer>
+  </main>
+  <template>
+    <game-over>
+      <span>
+        <i class="text"></i>
+        <i class="score"></i>
+        <div class="pyro">
+          <div class="before"></div>
+          <div class="after"></div>
+        </div>
+      </span>
+      <a class="action-button">
+        <i class="material-icons">replay</i>
+      </a>
+    </game-over>
+  </template>
+  <loader></loader>
+  <noscript>Please enable JavaScript</noscript>
+  <script src="app.js"></script>
+</body>
+</html>
