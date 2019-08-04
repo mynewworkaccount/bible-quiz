@@ -35,7 +35,6 @@ function pick(id, selected) {
     q.correct = correct;
     q.selectedAnswer = selected;
     status.setAttribute('data-correct', correct);
-    status.textContent = correct ? 'check' : 'close';
 }
 
 function render(q) {
@@ -73,7 +72,7 @@ function gameover(correct, total) {
 }
 
 async function load() {
-    const response = await fetch('https://chikuse.co.za/q/api/questions');
+    const response = await fetch('http://localhost/q/questions');
     const json = await response.json();
     show(main);
     hide(loader);

@@ -5,9 +5,6 @@ const ASSETS = [
     '/favicon.ico',
     '/assets/style.css',
     '/assets/images/7.png',
-    '/assets/fonts/roboto-regular.woff2',
-    '/assets/fonts/MaterialIcons-Regular.woff',
-    '/assets/fonts/MaterialIcons-Regular.woff2',
     '/app.js'
 ];
 
