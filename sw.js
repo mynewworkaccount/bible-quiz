@@ -3,9 +3,9 @@ const CACHE = 'static-cache';
 const ASSETS = [
     '/index.html',
     '/favicon.ico',
-    '/assets/style.css',
-    '/assets/images/7.png',
-    '/app.js'
+    '/style.css',
+    '/app.js',
+    '/images/7.png'
 ];
 
 self.addEventListener('install', () => {

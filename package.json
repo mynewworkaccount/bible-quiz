@@ -1,0 +1,9 @@
+{
+  "name": "tough-quiz",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "fs-extra": "^8.1.0",
+    "inline-source": "^7.0.0"
+  }
+}
