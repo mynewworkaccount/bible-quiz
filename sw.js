@@ -1,40 +1,42 @@
 const CACHE = 'static-cache';
 
 const ASSETS = [
-    '/index.html',
-    '/favicon.ico',
-    '/style.css',
-    '/app.js',
-    '/images/7.png'
+    './index.html',
+    './favicon.ico',
+    './images/bg.webp'
 ];
 
-self.addEventListener('install', () => {
+addEventListener('install', () => {
     caches.open(CACHE).then(cache =>
         cache.addAll(ASSETS)
     );
 });
 
-self.addEventListener('fetch', event => {
+addEventListener('fetch', event => {
     event.respondWith(
-        caches.match(event.request, { ignoreVary: true }).then(response => {
-            const notajax = event.request.url.indexOf('/questions') == -1;
-            if (notajax && response) {
+        caches.match(event.request).then(response => {
+            const isCacheable = event.request.url.indexOf("/questions") == -1;
+            if (isCacheable && response) {
                 return response;
             }
             else {
-                return fetch(event.request).then(response => {
-                    const clone = response.clone();
-                    caches.open(CACHE).then(cache => {
-                        cache.put(event.request, response);
+                return fetch(event.request).then(res => {
+                    return caches.open(CACHE).then(cache => {
+                        if(isCacheable) {
+                            cache.put(event.request.url, res.clone());
+                        }
+                        return res;
                     });
-                    return clone;
-                });
+                })
+                    .catch(err => {
+                        console.log(err);
+                    });
             }
         })
     );
 });
 
-self.addEventListener('activate', event => {
+addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys =>
             Promise.all(

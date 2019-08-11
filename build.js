@@ -5,31 +5,31 @@ const { inlineSource } = require("inline-source");
     console.log("Starting build ...");
 
     const dir = "./dist";
-    const testApi = "http://localhost/q";
-    const liveApi = "https://chikuse.co.za/q/api";
-    
     const start = Date.now();
-    const html = await inlineSource("index.html", {
+    let html = await inlineSource("index.html", {
         compress: true,
         attribute: false,
-        ignore: ["json", "ico", "png"],
+        ignore: ["json", "webp", "ico", "png"],
+        handlers: [e => {
+            e.fileContent = e.fileContent.replace("//await", "await");
+        }],
         fs
     });
 
-    fs.emptyDirSync(dir);
-    
-    fs.copySync("./images", `${dir}/images`);
-    fs.copySync("favicon.ico", `${dir}/favicon.ico`);
-    fs.copySync("manifest.json", `${dir}/manifest.json`);
-    fs.outputFileSync(`${dir}/index.html`, html.replace(testApi, liveApi));
+    html = html
+        .replace("___oncontextmenu", "oncontextmenu")
+        .replace("http://localhost/q", "https://chikuse.co.za/q/apiv2");
 
-    let sw = fs.readFileSync('sw.js', 'utf8');
-    sw = sw.replace("'/app.js',\n", "");
-    sw = sw.replace("'/style.css',\n", "");
-    fs.outputFileSync(`${dir}/sw.js`, sw);
+    fs.emptyDirSync(dir);
+    fs.copySync("sw.js", `${dir}/sw.js`);
+    fs.copySync("favicon.ico", `${dir}/favicon.ico`);
+    fs.outputFileSync(`${dir}/index.html`, html);
+    fs.copySync("manifest.json", `${dir}/manifest.json`);
+    fs.copySync("./images/bg.webp", `${dir}/images/bg.webp`);
+    fs.copySync("./images/icons-192.png", `${dir}/images/icons-192.png`);
+    fs.copySync("./images/icons-512.png", `${dir}/images/icons-512.png`);
 
     const buildTime = Date.now() - start;
 
     console.log(`Successfully built in ${buildTime}ms`);
-
 })();

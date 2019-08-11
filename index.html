@@ -4,20 +4,23 @@
   <meta charset="utf-8">
   <meta name="author" content="K Chikuse">
   <meta name="description" content="Tough Bible Quiz">
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#3a88cb">
-  <link href="favicon.ico" rel="icon">
   <link href="manifest.json" rel="manifest">
+  <link href="favicon.ico" rel="icon">
+  <link href="favicon.ico" rel="apple-touch-icon">
   <link href="style.css" rel="stylesheet">
-  <link href="images/7.png" rel="prefetch" as="image">
+  <link href="images/bg.webp" rel="prefetch" as="image">
   <title>Tough Bible Quiz</title>
 </head>
 <body oncontextmenu="return false">
+
   <main cloak>
     <header>
-      <i></i>
+      <tick></tick>
+      <button about>?</button>
     </header>
     <content></content>
     <footer>
@@ -26,21 +29,26 @@
       <button></button>
     </footer>
   </main>
-  <template>
-    <game-over>
-      <span>
-        <i class="text"></i>
-        <i class="score"></i>
-        <div class="pyro">
-          <div class="before"></div>
-          <div class="after"></div>
-        </div>
-      </span>
-      <a class="action-button"><i></i></a>
-    </game-over>
-  </template>
+
+  <game-over cloak>
+    <score-text></score-text>
+    <score></score>
+    <button replay></button>
+    <label>GO ONLINE TO PLAY</label>
+  </game-over>
+
   <loader></loader>
+
+  <about-us cloak>
+    <container>
+      <span>Simple Apps</span>
+      <p>kchikuse@gmail.com</p>
+  </container>
+  </about-us>
+
+  <script src="js/game.js"></script>
+  <script src="js/app.js"></script>
+
   <noscript>Please enable JavaScript</noscript>
-  <script src="app.js"></script>
 </body>
 </html>
