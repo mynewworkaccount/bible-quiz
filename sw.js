@@ -22,7 +22,7 @@ addEventListener('fetch', event => {
             else {
                 return fetch(event.request).then(res => {
                     return caches.open(CACHE).then(cache => {
-                        if(isCacheable) {
+                        if (isCacheable) {
                             cache.put(event.request.url, res.clone());
                         }
                         return res;

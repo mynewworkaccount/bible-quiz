@@ -1,189 +1,134 @@
-const show = e => e.removeAttribute("cloak");
-const hide = e => e.setAttribute("cloak", "");
-const $ = e => document.querySelector(e);
-
 const BODY = $("body");
 const LOADER = $("loader");
 const GAME_SCREEN = $("main");
-const QUESTION_TEXT = $("main content");
-const ABOUT_SCREEN = $("about-us");
-const ABOUT_BUTTON = $("main header [about]");
+const FOOTER = $("main footer");
+const QUESTION = $("main content");
+const ABOUTUS_SCREEN = $("about-us");
 const GAMEOVER_SCREEN = $("game-over");
 const GAMEOVER_SCORE = $("game-over score");
-const GAMEOVER_BUTTON = $("game-over [replay]");
+const REPLAY_BUTTON = $("game-over button");
 const GAMEOVER_TEXT = $("game-over score-text");
+const ABOUTUS_BUTTON = $("main header button");
 const BUTTONS = document.querySelectorAll("main footer button");
+const URL = "http://localhost/q/questions";
 
-const API = "http://localhost/q/questions"
-let counter = 0;
-let qs = [];
+const game = new Game();
 
-const game = createGame();
 addEventListener("load", startGame);
-addEventListener("online", checkOnlineStatus);
-addEventListener("offline", checkOnlineStatus);
-addEventListener("DOMContentLoaded", addClickEvents);
-
-function createGame() {
-    const g = new Game();
-    const KEY = "game-state";
-    const json = localStorage.getItem(KEY);
-    if (json) {
-        Object.assign(g, JSON.parse(json));
-    }
-
-    return new Proxy(g, {
-        set(target, key, value) {
-            target[key] = value;
-            localStorage.setItem(KEY, JSON.stringify(g));
-            return true;
-        }
-    });
-}
+addEventListener("online", checkOnline);
+addEventListener("offline", checkOnline);
+addEventListener("DOMContentLoaded", () => {
+    REPLAY_BUTTON .addEventListener("click", playAgain);
+    ABOUTUS_BUTTON.addEventListener("click", () => show(ABOUTUS_SCREEN));
+    ABOUTUS_SCREEN.addEventListener("click", () => hide(ABOUTUS_SCREEN));
+    BUTTONS.forEach(e => e.addEventListener("click", throttle(onSelect, 800)));
+});
+addEventListener("load", async () => {
+    //await navigator.serviceWorker.register("sw.js");
+});
 
 async function startGame() {
     if (game.over) {
-        hide(LOADER);
-        hide(GAME_SCREEN);
-        show(GAMEOVER_SCREEN);
-
-        checkOnlineStatus();
-
-        GAMEOVER_TEXT.textContent = game.score;
-        GAMEOVER_SCORE.textContent = game.scoreText;
-        return;
+        game.reset();
     }
 
-    counter = 0;
-
-    await fetchQuestions();
-
-    gotoNextQuestion();
-
-    await navigator.serviceWorker.register("sw.js");
+    const state = await downloadQuestions();
+    game.update(state);
+    render(game.q);
 }
 
-function addClickEvents() {
-    GAMEOVER_BUTTON.addEventListener("click", playAgain);
-
-    ABOUT_BUTTON.addEventListener("click", () => {
-        show(ABOUT_SCREEN);
-    });
-
-    ABOUT_SCREEN.addEventListener("click", () => {
-        hide(ABOUT_SCREEN);
-    });
-
-    BUTTONS.forEach(button => {
-        button.addEventListener("click", function () {
-            const q = this.getAttribute("q");
-            const answer = this.getAttribute("answer");
-            const correct = answerSelected(q, answer);
-
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    BODY.setAttribute("data-correct", correct);
-                }, 400);
-            });
-
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    BODY.removeAttribute("data-correct");
-                    gotoNextQuestion();
-                }, 1000);
-            });
-        });
-    });
-}
-
-function answerSelected(id, selected) {
-    const q = qs.find(i => i.id == id);
-    const answer = q.answers.find(i => i.correct);
-    const correct = answer.id == selected;
-    q.selectedAnswer = selected;
-    q.correct = correct;
-    return correct;
-}
-
-function gotoNextQuestion() {
-    if (counter == qs.length) {
-        const total = qs.length;
-        const correct = qs.filter(i => i.correct).length;
-        gameover(correct, total);
-        return;
-    }
-
-    const q = qs[counter];
-    QUESTION_TEXT.textContent = q.text;
-    q.answers.forEach((answer, i) => {
-        BUTTONS[i].textContent = answer.text;
-        BUTTONS[i].setAttribute("q", q.id);
-        BUTTONS[i].setAttribute("answer", answer.id);
-    });
-
-    counter++;
-}
-
-function gameover(correct, total) {
-    hide(GAME_SCREEN);
-    show(GAMEOVER_SCREEN);
-
-    const result = correct == total ? "WIN" : "LOSE";
-    const scoreText = `GAME OVER. YOU ${result}`;
-    const score = `${correct} / ${total}`;
-
-    GAMEOVER_SCORE.textContent = score;
-    GAMEOVER_TEXT.textContent = scoreText;
-
-    game.over = true;
-    game.score = score;
-    game.scoreText = scoreText;
-}
-
-function playAgain() {
-    if (game.reset) {
-        counter = 0;
-        game.index = 0;
-        game.seed = 0;
-    }
-    else {
-        game.index = game.index + 1;
-    }
-
-    show(LOADER);
-    hide(GAMEOVER_SCREEN);
-    game.over = false;
-    dispatchEvent(new Event("load"));
-}
-
-async function fetchQuestions() {
+async function downloadQuestions() {
     loading(true);
-    const query = `?seed=${game.seed}&index=${game.index}`;
-    const response = await fetch(API + query);
+    const response = await fetch(URL + `?seed=${game.seed}&index=${game.index}`);
     const json = await response.json();
     loading(false);
+    return json;
+}
 
-    game.seed = json.seed;
-    game.index = json.index;
-    game.reset = json.reset;
-    qs = json.questions;
+async function playAgain() {
+    game.reset();
+    show(GAME_SCREEN);
+    hide(GAMEOVER_SCREEN);
+    await startGame();
+}
+
+function render(q) {
+    QUESTION.textContent = q.text;
+    q.answers.forEach((answer, i) => {
+        BUTTONS[i].dataset.q = q.id;
+        BUTTONS[i].textContent = answer.text;
+        BUTTONS[i].dataset.answer = answer.id;
+        BUTTONS[i].removeAttribute("data-correct");
+    });
+}
+
+function gameover() {
+    const total = game.total;
+    const correct = game.score;
+    const result = correct == total ? "WIN" : "LOSE";
+
+    game.save();
+
+    hide(GAME_SCREEN);
+    show(GAMEOVER_SCREEN);
+    GAMEOVER_SCORE.textContent = `${correct} / ${total}`;
+    GAMEOVER_TEXT.textContent = `GAME OVER. YOU ${result}`;
+}
+
+function onSelect() {
+    const ds = this.dataset;
+    ds.correct = game.answer(ds.q, ds.answer);
+    
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+
+            game.next();
+
+            if (game.over) {
+                gameover();
+                return;
+            }
+
+            render(game.q);
+
+        }, 500);
+    });
+}
+
+function throttle(callback, limit) {
+    let wait = false;
+    return function () {
+        if (!wait) {
+            callback.apply(this, arguments);
+            wait = true;
+            setTimeout(() => {
+                wait = false;
+            }, limit);
+        }
+    };
+}
+
+function show(e) {
+    e.removeAttribute("cloak");
+}
+
+function hide(e) {
+    e.setAttribute("cloak", "");
 }
 
 function loading(state) {
-    if (state) {
-        hide(GAME_SCREEN);
-        show(LOADER);
-    }
-    else {
-        show(GAME_SCREEN);
-        hide(LOADER);
-    }
+    toggle(state, "loading");
 }
 
-function checkOnlineStatus() {
-    if (game.offline)
-        BODY.setAttribute("data-offline", true);
+function checkOnline() {
+    toggle(!navigator.onLine, "offline");
+}
 
-    else
-        BODY.removeAttribute("data-offline");
+function toggle(state, clazz) {
+    if (state)  BODY.dataset[clazz] = true;
+    else delete BODY.dataset[clazz];
+}
+
+function $(e) {
+    return document.querySelector(e);
 }

@@ -15,14 +15,13 @@
   <link href="images/bg.webp" rel="prefetch" as="image">
   <title>Tough Bible Quiz</title>
 </head>
-<body oncontextmenu="return false">
+<body __oncontextmenu="return false">
 
-  <main cloak>
+  <main>
     <header>
-      <tick></tick>
-      <button about>?</button>
+      <content></content>
+      <button>?</button>
     </header>
-    <content></content>
     <footer>
       <button></button>
       <button></button>
@@ -30,20 +29,18 @@
     </footer>
   </main>
 
+  <loader></loader>
+
   <game-over cloak>
     <score-text></score-text>
     <score></score>
-    <button replay></button>
+    <button></button>
     <label>GO ONLINE TO PLAY</label>
   </game-over>
 
-  <loader></loader>
-
   <about-us cloak>
-    <container>
-      <span>Simple Apps</span>
-      <p>kchikuse@gmail.com</p>
-  </container>
+    <span>Simple Apps</span>
+    <p>kchikuse@gmail.com</p>
   </about-us>
 
   <script src="js/game.js"></script>

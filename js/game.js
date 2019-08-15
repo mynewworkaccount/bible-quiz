@@ -1,11 +1,55 @@
 class Game {
     constructor() {
-        this._seed = 0;
+        this._q = {};
+        this._over = false;
+        this._counter = 0;
         this._index = 0;
-        this._score = '';
-        this._scoreText = '';
-        this._gameover = false;
-        this._resetgame = false;
+        this._seed = 0;
+        this._qs = [];
+        this.CACHE = "state-cache";
+
+        const json = localStorage.getItem(this.CACHE);
+        if (json) {
+            Object.assign(this, JSON.parse(json));
+        }
+    }
+
+    update(state) {
+        this._seed = state.seed;
+        this._index = state.index;
+        this._qs = state.questions;
+        this.save();
+    }
+
+    save() {
+        localStorage.setItem(this.CACHE, JSON.stringify({
+            _seed: this._seed,
+            _index: this._index,
+            _over: this._over
+        }));
+    }
+
+    answer(qid, selected) {
+        const q = this._qs.find(i => i.id == qid);
+        const answer = q.answers.find(i => i.correct);
+        const correct = answer.id == selected;
+        q.selectedAnswer = selected;
+        q.correct = correct;
+        return correct;
+    }
+
+    next() {
+        this._counter++;
+        const qs = this._qs.length;
+        this._over = this._counter >= qs;
+    }
+
+    reset() {
+        this._q = {};
+        this._qs = [];
+        this._counter = 0;
+        this._over = false;
+        this._index++;
     }
 
     get index() {
@@ -16,47 +60,19 @@ class Game {
         return this._seed;
     }
 
-    get score() {
-        return this._score;
-    }
-
-    get scoreText() {
-        return this._scoreText;
-    }
-
     get over() {
-        return this._gameover === "true";
+        return this._over;
     }
 
-    get reset() {
-        return this._resetgame === "true";
+    get q() {
+        return this._qs[this._counter];
     }
 
-    get offline() {
-        return navigator.onLine === false;
+    get total() {
+        return this._qs.length;
     }
 
-    set index(value) {
-        this._index = value;
-    }
-
-    set seed(value) {
-        this._seed = value;
-    }
-
-    set reset(value) {
-        this._resetgame = value;
-    }
-
-    set over(value) {
-        this._gameover = value;
-    }
-
-    set score(value) {
-        this._score = value;
-    }
-
-    set scoreText(value) {
-        this._scoreText = value;
+    get score() {
+        return this._qs.filter(i => i.correct).length;
     }
 }
