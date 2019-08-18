@@ -1,9 +1,7 @@
 const CACHE = 'static-cache';
 
 const ASSETS = [
-    './index.html',
-    './favicon.ico',
-    './images/bg.webp'
+    './index.html'
 ];
 
 addEventListener('install', () => {

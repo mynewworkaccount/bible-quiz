@@ -5,13 +5,11 @@ class Game {
         this._counter = 0;
         this._index = 0;
         this._seed = 0;
+        this._wins = 0;
         this._qs = [];
         this.CACHE = "state-cache";
 
-        const json = localStorage.getItem(this.CACHE);
-        if (json) {
-            Object.assign(this, JSON.parse(json));
-        }
+        this.loadState();
     }
 
     update(state) {
@@ -25,8 +23,17 @@ class Game {
         localStorage.setItem(this.CACHE, JSON.stringify({
             _seed: this._seed,
             _index: this._index,
-            _over: this._over
+            _over: this._over,
+            _wins: this._wins
         }));
+    }
+
+    loadState() {
+        const json = localStorage.getItem(this.CACHE);
+        if (json) {
+            const state = JSON.parse(json);
+            Object.assign(this, state);
+        }
     }
 
     answer(qid, selected) {
@@ -50,6 +57,10 @@ class Game {
         this._counter = 0;
         this._over = false;
         this._index++;
+    }
+
+    wins() {
+        this._wins = this._wins + 1;
     }
 
     get index() {

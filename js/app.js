@@ -6,7 +6,8 @@ const QUESTION = $("main content");
 const ABOUTUS_SCREEN = $("about-us");
 const GAMEOVER_SCREEN = $("game-over");
 const GAMEOVER_SCORE = $("game-over score");
-const REPLAY_BUTTON = $("game-over button");
+const SHARE_BUTTON  = $("game-over button[share]");
+const REPLAY_BUTTON = $("game-over button[replay]");
 const GAMEOVER_TEXT = $("game-over score-text");
 const ABOUTUS_BUTTON = $("main header button");
 const BUTTONS = document.querySelectorAll("main footer button");
@@ -22,6 +23,11 @@ addEventListener("DOMContentLoaded", () => {
     ABOUTUS_BUTTON.addEventListener("click", () => show(ABOUTUS_SCREEN));
     ABOUTUS_SCREEN.addEventListener("click", () => hide(ABOUTUS_SCREEN));
     BUTTONS.forEach(e => e.addEventListener("click", throttle(onSelect, 800)));
+
+    if(navigator.share) {
+        show(SHARE_BUTTON);
+        SHARE_BUTTON.addEventListener("click", share);
+    }
 });
 addEventListener("load", async () => {
     //await navigator.serviceWorker.register("sw.js");
@@ -52,6 +58,14 @@ async function playAgain() {
     await startGame();
 }
 
+async function share() {
+    await navigator.share({
+        title: 'Tough Bible Quiz',
+        text: 'Challenge yourself with our super tough Bible quiz',
+        url: 'https://q.chikuse.co.za',
+    });
+}
+
 function render(q) {
     QUESTION.textContent = q.text;
     q.answers.forEach((answer, i) => {
@@ -65,18 +79,23 @@ function render(q) {
 function gameover() {
     const total = game.total;
     const correct = game.score;
-    const result = correct == total ? "WIN" : "LOSE";
+    const win = correct == total;
+
+    if(win) {
+        game.wins();
+    }
 
     game.save();
 
     hide(GAME_SCREEN);
     show(GAMEOVER_SCREEN);
     GAMEOVER_SCORE.textContent = `${correct} / ${total}`;
-    GAMEOVER_TEXT.textContent = `GAME OVER. YOU ${result}`;
+    GAMEOVER_TEXT.textContent = `YOU ${ win ? "WIN" : "LOSE" }`;
 }
 
 function onSelect() {
     const ds = this.dataset;
+
     ds.correct = game.answer(ds.q, ds.answer);
     
     requestAnimationFrame(() => {
@@ -92,7 +111,7 @@ function onSelect() {
             render(game.q);
 
         }, 500);
-    });
+    }); 
 }
 
 function throttle(callback, limit) {
@@ -117,16 +136,22 @@ function hide(e) {
 }
 
 function loading(state) {
-    toggle(state, "loading");
+    if (state)  
+    BODY.dataset.loading = true;
+    
+    else 
+    delete BODY.dataset.loading;
 }
 
 function checkOnline() {
-    toggle(!navigator.onLine, "offline");
-}
-
-function toggle(state, clazz) {
-    if (state)  BODY.dataset[clazz] = true;
-    else delete BODY.dataset[clazz];
+    if(navigator.onLine) {
+        REPLAY_BUTTON.removeAttribute("disabled");
+        REPLAY_BUTTON.textContent = 'PLAY AGAIN';
+    }
+    else {
+        REPLAY_BUTTON.setAttribute("disabled", true);
+        REPLAY_BUTTON.textContent = 'GO ONLINE TO PLAY';
+    }
 }
 
 function $(e) {
