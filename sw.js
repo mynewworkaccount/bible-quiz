@@ -1,16 +1,16 @@
-const CACHE = 'static-cache';
+const CACHE = "static-cache";
 
 const ASSETS = [
-    './index.html'
+    "./index.html"
 ];
 
-addEventListener('install', () => {
+addEventListener("install", () => {
     caches.open(CACHE).then(cache =>
         cache.addAll(ASSETS)
     );
 });
 
-addEventListener('fetch', event => {
+addEventListener("fetch", event => {
     event.respondWith(
         caches.match(event.request).then(response => {
             const isCacheable = event.request.url.indexOf("/questions") == -1;
@@ -34,7 +34,7 @@ addEventListener('fetch', event => {
     );
 });
 
-addEventListener('activate', event => {
+addEventListener("activate", event => {
     event.waitUntil(
         caches.keys().then(keys =>
             Promise.all(

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="author" content="K Chikuse">
   <meta name="description" content="Tough Bible Quiz">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#3a88cb">
@@ -16,10 +16,16 @@
 </head>
 <body __oncontextmenu="return false">
 
+  <loader></loader>
+
+  <on-error cloak>
+    <span>There was a network error</span>
+    <button>TRY AGAIN</button>
+  </on-error>
+
   <main>
     <header>
       <content></content>
-      <button>?</button>
     </header>
     <footer>
       <button></button>
@@ -28,8 +34,6 @@
     </footer>
   </main>
 
-  <loader></loader>
-
   <game-over cloak>
     <score-text></score-text>
     <score></score>
@@ -37,13 +41,9 @@
     <button share cloak>SHARE</button>
   </game-over>
 
-  <about-us cloak>
-    <span>Simple Apps</span>
-    <p>kchikuse@gmail.com</p>
-  </about-us>
-
   <script src="js/game.js"></script>
   <script src="js/app.js"></script>
+  
   <noscript>Please enable JavaScript</noscript>
 </body>
 </html>

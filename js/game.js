@@ -7,40 +7,68 @@ class Game {
         this._seed = 0;
         this._wins = 0;
         this._qs = [];
-        this.CACHE = "state-cache";
-
-        this.loadState();
     }
 
-    update(state) {
-        this._seed = state.seed;
-        this._index = state.index;
-        this._qs = state.questions;
-        this.save();
+    set wins(value) {
+        this._wins = value;
     }
 
-    save() {
-        localStorage.setItem(this.CACHE, JSON.stringify({
-            _seed: this._seed,
-            _index: this._index,
-            _over: this._over,
-            _wins: this._wins
-        }));
+    set seed(value) {
+        this._seed = value;
     }
 
-    loadState() {
-        const json = localStorage.getItem(this.CACHE);
-        if (json) {
-            const state = JSON.parse(json);
-            Object.assign(this, state);
-        }
+    set index(value) {
+        this._index = value;
+    }
+
+    set counter(value) {
+        this._counter = value;
+    }
+
+    set over(value) {
+        this._over = value;
+    }
+
+    set qs(value) {
+        this._qs = value;
+    }
+
+    get seed() {
+        return this._seed;
+    }
+
+    get index() {
+        return +this._index;
+    }
+
+    get counter() {
+        return this._counter;
+    }
+
+    get over() {
+        return this._over;
+    }
+
+    get wins() {
+        return this._wins;
+    }
+
+    get q() {
+        return this._qs[this._counter];
+    }
+
+    get total() {
+        return this._qs.length;
+    }
+
+    get score() {
+        return this._qs.filter(i => i.correct).length;
     }
 
     answer(qid, selected) {
         const q = this._qs.find(i => i.id == qid);
         const answer = q.answers.find(i => i.correct);
         const correct = answer.id == selected;
-        q.selectedAnswer = selected;
         q.correct = correct;
         return correct;
     }
@@ -59,31 +87,13 @@ class Game {
         this._index++;
     }
 
-    wins() {
-        this._wins = this._wins + 1;
-    }
-
-    get index() {
-        return +this._index;
-    }
-
-    get seed() {
-        return this._seed;
-    }
-
-    get over() {
-        return this._over;
-    }
-
-    get q() {
-        return this._qs[this._counter];
-    }
-
-    get total() {
-        return this._qs.length;
-    }
-
-    get score() {
-        return this._qs.filter(i => i.correct).length;
+    toJSON() {
+        return {
+            counter: this._counter,
+            index: this._index,
+            seed: this._seed,
+            over: this._over,
+            wins: this._wins
+        };
     }
 }
