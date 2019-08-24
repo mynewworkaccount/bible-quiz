@@ -1,0 +1,15 @@
+image: node
+
+cache:
+    paths:
+      - node_modules
+
+compile:
+  stage: build
+  script:
+    - npm install
+    - node build.js
+    - cd dist
+    - curl -T index.html $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
+    - curl -T manifest.json $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
+    - curl -T sw.js $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
