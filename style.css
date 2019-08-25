@@ -76,13 +76,6 @@ main content {
   align-items: center;
 }
 
-main book {
-  text-align: right;
-  text-transform: uppercase;
-  opacity: 0.4;
-  width: 100%;
-}
-
 main footer {
   justify-content: space-evenly;
 }
