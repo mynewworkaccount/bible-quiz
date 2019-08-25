@@ -66,7 +66,7 @@ class Game {
     }
 
     addWin() {
-        const win = this.score >= this.total - 1;
+        const win = this.score == this.total;
         if(win) {
             this._wins ++;
         }
