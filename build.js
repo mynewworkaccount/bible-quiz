@@ -24,6 +24,7 @@ const { inlineSource } = require("inline-source");
 
     fs.emptyDirSync(dir);
     fs.copySync("sw.js", `${dir}/sw.js`);
+    fs.copySync("robots.txt", `${dir}/robots.txt`);
     fs.copySync("manifest.json", `${dir}/manifest.json`);
     fs.copySync("images/icons-192.png", `${dir}/images/icons-192.png`);
     fs.copySync("images/icons-512.png", `${dir}/images/icons-512.png`);
