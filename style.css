@@ -71,6 +71,16 @@ main content {
   line-height: 40px;
   text-align: center;
   color: #c9e7f3;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+main book {
+  text-align: right;
+  text-transform: uppercase;
+  opacity: 0.4;
+  width: 100%;
 }
 
 main footer {

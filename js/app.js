@@ -1,3 +1,4 @@
+const BOOK = $("book");
 const LOADER = $("loader");
 const GAME_SCREEN = $("main");
 const QUESTION = $("main content");
@@ -82,6 +83,7 @@ function replay() {
 
 function draw() {
     const q = game.q;
+    BOOK.textContent = game.book;
     QUESTION.textContent = q.text;
     q.answers.forEach((answer, i) => {
         BUTTONS[i].disabled = false;
@@ -101,7 +103,7 @@ function select() {
 
     animate(() => {
         game.next();
-        
+
         if (game.over) {
             return gameover();
         }
