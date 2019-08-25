@@ -5,6 +5,7 @@ const ERROR_SCREEN = $("on-error");
 const ERROR_BUTTON = $("on-error button");
 const GAMEOVER_SCREEN = $("game-over");
 const GAMEOVER_SCORE = $("game-over score");
+const GAMEOVER_STARS = $("game-over stars");
 const SHARE_BUTTON = $("game-over button[share]");
 const REPLAY_BUTTON = $("game-over button[replay]");
 const GAMEOVER_TEXT = $("game-over score-text");
@@ -15,55 +16,71 @@ const CACHE = "game-state";
 
 const game = new Game();
 
-addEventListener("online", checkOnline);
-addEventListener("offline", checkOnline);
-addEventListener("beforeunload", cacheState);
-addEventListener("DOMContentLoaded", clickEvents);
+addEventListener("online", online);
+addEventListener("offline", online);
+addEventListener("beforeunload", saveGame);
+addEventListener("DOMContentLoaded", onclick);
 addEventListener("load", async () => {
-    loadStateCache();
-    startGame();
+    loadGame();
+    play();
     //await navigator.serviceWorker.register("sw.js");
 });
 
-function startGame() {
+function play() {
     if (game.over) {
         game.reset();
     }
 
-    downloadState().then(state => {
+    download().then(state => {
         game.seed = state.seed;
         game.index = state.index;
         game.qs = state.questions;
-        cacheState();
-        render();
+        saveGame();
+        draw();
     })
-    .catch(() => {
-        show(ERROR_SCREEN);
-    });
+        .catch(() => {
+            show(ERROR_SCREEN);
+        });
 }
 
-async function downloadState() {
+function gameover() {
+    const win = game.addWin();
+
+    saveGame();
+    hide(GAME_SCREEN);
+    show(GAMEOVER_SCREEN);
+
+    GAMEOVER_SCREEN.dataset.win = win;
+    GAMEOVER_TEXT.textContent = `YOU ${win ? "WIN" : "LOSE"}`;
+    GAMEOVER_SCORE.textContent = `${game.score} / ${game.total}`;
+
+    if (game.wins) {
+        show(GAMEOVER_STARS)
+            .textContent = game.wins;
+    }
+}
+
+async function download() {
     loading(true);
-    const url = "http://localhost/q/questions";
-    const response = await fetch(url + `?seed=${game.seed}&index=${game.index}`);
+    const response = await fetch(`http://localhost/q/questions?seed=${game.seed}&index=${game.index}`);
     loading(false);
 
     if (response.ok) {
         return response.json();
     }
-    
-    throw new Error(response);
+
+    throw response;
 }
 
-async function playAgain() {
+function replay() {
     show(GAME_SCREEN);
     hide(ERROR_SCREEN);
     hide(GAMEOVER_SCREEN);
     delete GAMEOVER_SCREEN.dataset.win;
-    await startGame();
+    play();
 }
 
-function render() {
+function draw() {
     const q = game.q;
     QUESTION.textContent = q.text;
     q.answers.forEach((answer, i) => {
@@ -75,68 +92,49 @@ function render() {
     });
 }
 
-function gameover() {
-    const total = game.total;
-    const correct = game.score;
-    const win = correct == total;
+function select() {
+    const ds = this.dataset;
 
-    if (win) {
-        game.wins ++;
-    }
-
-    cacheState();
-    hide(GAME_SCREEN);
-    show(GAMEOVER_SCREEN);
-    GAMEOVER_SCREEN.dataset.win = win;
-    GAMEOVER_TEXT.textContent = `YOU ${win ? "WIN" : "LOSE"}`;
-    GAMEOVER_SCORE.textContent = `${correct} / ${total}`;
-}
-
-function onSelect() {
-    const q = this.dataset.q;
-    const answer = this.dataset.answer;
-    this.dataset.correct = game.answer(q, answer);
+    ds.correct = game.answer(ds.q, ds.answer);
 
     BUTTONS.forEach(e => e.disabled = true);
 
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            
-            game.next();
+    animate(() => {
+        game.next();
+        
+        if (game.over) {
+            return gameover();
+        }
 
-            if (game.over) {
-                gameover();
-                return;
-            }
-
-            render();
-            
-        }, 500);
+        draw();
     });
 }
 
-function clickEvents() {
-    ERROR_BUTTON.addEventListener("click", playAgain);
-    REPLAY_BUTTON.addEventListener("click", playAgain);
-    BUTTONS.forEach(e => e.addEventListener("click", throttle(onSelect, 800)));
+function onclick() {
+    ERROR_BUTTON.onclick = replay;
+    REPLAY_BUTTON.onclick = replay;
+
+    BUTTONS.forEach(b => {
+        b.onclick = select;
+    });
 
     if (navigator.share) {
-        show(SHARE_BUTTON);
-        SHARE_BUTTON.addEventListener("click", async () => {
-            await navigator.share({
-                title: 'Tough Bible Quiz',
-                text: 'Challenge yourself with our super tough Bible quiz',
-                url: 'https://q.chikuse.co.za',
-            });
-        });
+        show(SHARE_BUTTON)
+            .onclick = async () => {
+                await navigator.share({
+                    title: 'Tough Bible Quiz',
+                    text: 'Challenge yourself with our super tough Bible quiz',
+                    url: 'https://q.chikuse.co.za',
+                });
+            };
     }
 }
 
-function cacheState() {
+function saveGame() {
     localStorage.setItem(CACHE, JSON.stringify(game));
 }
 
-function loadStateCache() {
+function loadGame() {
     const json = localStorage.getItem(CACHE);
     if (json) {
         const state = JSON.parse(json);
@@ -146,21 +144,23 @@ function loadStateCache() {
 
 function show(e) {
     e.removeAttribute("cloak");
+    return e;
 }
 
 function hide(e) {
     e.setAttribute("cloak", "");
+    return e;
 }
 
 function loading(busy) {
-    if (busy) 
-    show(LOADER);
-    
-    else 
-    hide(LOADER);
+    if (busy)
+        show(LOADER);
+
+    else
+        hide(LOADER);
 }
 
-function checkOnline() {
+function online() {
     if (navigator.onLine) {
         REPLAY_BUTTON.disabled = false;
         REPLAY_BUTTON.textContent = 'PLAY AGAIN';
@@ -171,17 +171,12 @@ function checkOnline() {
     }
 }
 
-function throttle(callback, limit) {
-    let wait = false;
-    return function () {
-        if (!wait) {
-            callback.apply(this, arguments);
-            wait = true;
-            setTimeout(() => {
-                wait = false;
-            }, limit);
-        }
-    };
+function animate(callback) {
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            callback.apply(this);
+        }, 500);
+    });
 }
 
 function $(e) {

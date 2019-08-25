@@ -1,10 +1,10 @@
 :root {
+  --text-color: #e0dada;
   --red-color: #ef5350;
   --green-color: #43A047;
-  --text-color: #e0dada;
-  --bg-color: #8b4f39;
   --btn-bg-color: #0288d1;
-  --brick-texture: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="44" viewBox="0 0 42 44"><g  fill="none" fill-rule="evenodd"><g id="brick-wall" fill="%239C92AC" fill-opacity="0.4"><path d="M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z"/></g></g></svg>');
+  --brick-color: #8b4f39;
+  --brick-texture: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="44" viewBox="0 0 42 44"><g  fill="none" fill-rule="evenodd"><g fill="%239C92AC" fill-opacity="0.4"><path d="M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z"/></g></g></svg>');
 }
 
 *, *:before, *:after {
@@ -26,7 +26,7 @@ body {
   display: grid;
   place-items: center;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  background-color: var(--bg-color); 
+  background-color: var(--brick-color); 
   background-image: var(--brick-texture);
   background-repeat: repeat;
   -webkit-touch-callout: none;
@@ -158,8 +158,8 @@ game-over score {
   color: white;
 }
 
-game-over button,
-on-error button {
+on-error button,
+game-over button {
   background-color: var(--btn-bg-color);
   box-shadow: 0 8px 6px -6px black;
   font-size: 19px;
@@ -190,6 +190,18 @@ game-over label {
   text-align: center;
   font-size: 26px;
   z-index: 99;
+}
+
+game-over stars {
+  color: #f9a825;
+  font-size: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 15vw;
+}
+game-over stars:before {
+  content: "\2605";
 }
 
 on-error {

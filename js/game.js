@@ -9,10 +9,6 @@ class Game {
         this._qs = [];
     }
 
-    set wins(value) {
-        this._wins = value;
-    }
-
     set seed(value) {
         this._seed = value;
     }
@@ -31,6 +27,10 @@ class Game {
 
     set qs(value) {
         this._qs = value;
+    }
+
+    set wins(value) {
+        this._wins = value;
     }
 
     get seed() {
@@ -63,6 +63,15 @@ class Game {
 
     get score() {
         return this._qs.filter(i => i.correct).length;
+    }
+
+    addWin() {
+        const win = this.score >= this.total - 1;
+        if(win) {
+            this._wins ++;
+        }
+
+        return win;
     }
 
     answer(qid, selected) {
