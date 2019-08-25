@@ -13,3 +13,4 @@ compile:
     - curl -T index.html $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
     - curl -T manifest.json $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
     - curl -T sw.js $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
+    - curl -T robots.txt $FTP_SERVER -u $FTP_USER:$FTP_PASSWORD
