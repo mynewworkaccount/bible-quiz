@@ -5,6 +5,7 @@
   --btn-bg-color: #0288d1;
   --brick-color: #8b4f39;
   --brick-texture: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="44" viewBox="0 0 42 44"><g  fill="none" fill-rule="evenodd"><g fill="%239C92AC" fill-opacity="0.4"><path d="M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z"/></g></g></svg>');
+  --error-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="yellow"><path d="M16.971 0h-9.942l-7.029 7.029v9.941l7.029 7.03h9.941l7.03-7.029v-9.942l-7.029-7.029zm-4.971 19.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm.5-4.25h-1l-1-10h3l-1 10z"/></svg>');
 }
 
 *, *:before, *:after {
@@ -118,20 +119,26 @@ loader {
 }
 
 loader::after {
-  content: "";
   will-change: transform;
   animation: spin 1.1s infinite linear;
-  border: 9px solid rgba(255,255,255,.3);
+  border-color: rgba(255,255,255,.3);
   border-top-color: white;
-  border-radius: 50%;
-  position:absolute; 
-  top: 0; 
-  bottom: 0; 
-  left: 0; 
-  right: 0; 
+}
+
+on-error:after,
+loader::after {
+  content: "";
+  border-width: 9px;
+  border-style: solid;
+  border-radius: 50%; 
+  position:absolute;
   margin: auto;
   height: 100px;
   width: 100px;
+  bottom: 0; 
+  left: 0; 
+  right: 0;
+  top: 0;
 }
 
 game-over {
@@ -213,22 +220,17 @@ on-error {
   place-items: center;
   will-change: opacity;
   animation: fadeIn 0.4s both;
-  background-color: #303030;
-  background-repeat: repeat;
-  background-image:
-  radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
-  radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
-  radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
-  background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
-  background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
   height: 100vh;
-  font-size: 25px;
-  color: white;
+  font-size: 26px;
+  font-weight: 600;
   z-index: 2;
 }
-
-on-error span {
-  color: var(--red-color);
+on-error:after {
+  border-color: var(--red-color);
+  background-color: var(--red-color);
+  background-image: var(--error-icon);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 @keyframes fadeIn {
