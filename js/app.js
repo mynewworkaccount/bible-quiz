@@ -38,9 +38,10 @@ function play() {
         saveGame();
         draw();
     })
-        .catch(() => {
-            show(ERROR_SCREEN);
-        });
+    .catch(() => {
+        hide(LOADER);
+        show(ERROR_SCREEN);
+    });
 }
 
 function gameover() {
