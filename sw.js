@@ -1,7 +1,7 @@
 const CACHE = "static-cache";
 
 const ASSETS = [
-    "./index.html?v=2"
+    "./index.html"
 ];
 
 addEventListener("install", () => {
