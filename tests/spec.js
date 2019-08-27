@@ -33,7 +33,7 @@ describe('Game engine', () => {
         expect(game.q.id).toEqual(2);
     });
 
-    it('1 wrong answer wins', () => {
+    it('all correct answers is a win', () => {
         game.answer(1, 1);
         game.next();
 
@@ -46,14 +46,14 @@ describe('Game engine', () => {
         game.answer(4, 1);
         game.next();
 
-        game.answer(5, 0); // wrong
+        game.answer(5, 1);
         game.next();
 
         const win = game.addWin();
 
         expect(win).toEqual(true);
         expect(game.over).toEqual(true);
-        expect(game.score).toEqual(4);
+        expect(game.score).toEqual(5);
         expect(game.wins).toEqual(1);
     });
 
