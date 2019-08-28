@@ -5,7 +5,6 @@
   --btn-bg-color: #0579b9;
   --brick-color: #8b4f39;
   --brick-texture: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="42" height="44" viewBox="0 0 42 44"><g  fill="none" fill-rule="evenodd"><g fill="%239C92AC" fill-opacity="0.4"><path d="M0 0h42v44H0V0zm1 1h40v20H1V1zM0 23h20v20H0V23zm22 0h20v20H22V23z"/></g></g></svg>');
-  --error-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="yellow"><path d="M16.971 0h-9.942l-7.029 7.029v9.941l7.029 7.03h9.941l7.03-7.029v-9.942l-7.029-7.029zm-4.971 19.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm.5-4.25h-1l-1-10h3l-1 10z"/></svg>');
 }
 
 *, *:before, *:after {
@@ -225,12 +224,17 @@ on-error {
   font-weight: 600;
   z-index: 2;
 }
+
 on-error:after {
-  border-color: var(--red-color);
+  content: "\00D7";
+  font-size: 70px;
   background-color: var(--red-color);
-  background-image: var(--error-icon);
-  background-repeat: no-repeat;
-  background-size: cover;
+  border-color: #fff176;
+  color: #fff176;
+  display: flex;
+  justify-content: center;
+  height: 109px;
+  width: 109px;
 }
 
 @keyframes fadeIn {
