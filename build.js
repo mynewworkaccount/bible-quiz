@@ -8,7 +8,7 @@ const { inlineSource } = require("inline-source");
 
     console.time("Build took");
 
-    const dir = "./dist";
+    const dir = "./docs";
     const dev = "http://localhost/q";
     const live = "https://q.chikuse.co.za/apiv2";
     const bitmap = fs.readFileSync("favicon.webp");
