@@ -9,6 +9,6 @@ compile:
   script:
     - npm install
     - node build.js
-    - cd docs
+    - cd dist
     - find . -type f -exec curl -u $FTP_USER:$FTP_PASSWORD -T {} $FTP_SERVER/{} \;
     - ls -laR
