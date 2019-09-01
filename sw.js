@@ -26,9 +26,9 @@ addEventListener("fetch", event => {
                         return res;
                     });
                 })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                .catch(err => {
+                   console.log(err);
+                });
             }
         })
     );
@@ -44,4 +44,4 @@ addEventListener("activate", event => {
             )
         )
     );
-}); 
+});
