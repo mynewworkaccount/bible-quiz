@@ -123,8 +123,8 @@ function onclick() {
         show(SHARE_BUTTON)
             .onclick = async () => {
                 await navigator.share({
-                    title: 'Tough Bible Quiz',
-                    text: 'Challenge yourself with our super tough Bible quiz',
+                    title: 'Bible Quiz',
+                    text: 'Super tough Bible quiz',
                     url: 'https://q.chikuse.co.za',
                 });
             };
